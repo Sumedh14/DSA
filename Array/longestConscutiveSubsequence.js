@@ -1,5 +1,12 @@
 /*
 Hard
+
+Given an array of integers nums, return the length of the longest consecutive sequence of elements.
+A consecutive sequence is a sequence of elements in which each element is exactly 1 greater than the previous element.
+
+Input: nums = [2,20,4,10,3,4,5]
+Output: 4
+
 */
 
 function longestConsectiveSubsequence (arr) {
