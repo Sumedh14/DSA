@@ -131,7 +131,7 @@ class SortedLinkList extends LinkedList {
         let i = 0;
         for (; i < this.size; i++) {
             const res = this._sortedFunction(element, current.element);
-            if (res === -1) return -1;
+            if (res === -1) break;
             current = current.next;
         }
         return i;
