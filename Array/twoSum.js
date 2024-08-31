@@ -9,20 +9,6 @@ Input: nums = [5,5], target = 10
 Output: [0,1]
 */
 
-// function towSum (arr, target) {
-//     let hashMap = new Map();
-//     for (let i = 0; i < arr.length; i++) {
-//         let num = arr[i];
-//         const comp = (target - num);
-//         const sumIndex = hashMap.get(comp);
-
-//         const isTarget = hashMap.has(comp);
-//         if (isTarget) return [i, sumIndex];
-
-//         hashMap.set(num, i);
-//     }
-// }
-
 function twoSum (arr, target) {
     let hashMap = new Map();
     for (let i = 0; i < arr.length; i++) {
