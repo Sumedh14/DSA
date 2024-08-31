@@ -16,16 +16,20 @@ const addNumber = (list1, list2) => {
 
     let carry = 0
     while (list1 || list2 || carry) {
+        const newNode = new ListNode();
         let l1 = list1 ? list1.value : 0;
         let l2 = list2 ? list2.value : 0;
 
-        let value = l1 + l2 + carry;
+        let value = value1 + value2 + carry;
         carry = Math.floor(value / 10);
         value = value % 10;
+        newNode.val = value;
+        current.next = newNode;
 
-        current.next = new LinkedList(value);
+        current = current.next;
         list1 = list1 ? list1.next : null;
         list2 = list2 ? list2.next : null;
+
     }
     return newlist.next;
 }
