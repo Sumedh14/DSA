@@ -79,3 +79,22 @@ const high = 4;
 const valuef = mergeFunction(input, low, mid, high);
 
 console.log(valuef);
+
+
+
+const mergeAlgo = (arr, l, r) => {
+    if (l < r) {
+        let mid = Math.floor(l + (r - l) / 2);
+        arr = mergeAlgo(arr, l, mid);
+        arr = mergeAlgo(arr, mid + 1, r);
+        arr = mergeFunction(arr, l, mid, r);
+    }
+    return arr;
+}
+
+
+const input2 = [10, 5, 30, 15, 7];
+
+const valueA = mergeAlgo(input2, 0, input2.length);
+
+console.log(valueA)
