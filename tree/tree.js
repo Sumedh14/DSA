@@ -7,9 +7,7 @@ const uniqueId = (() => {
     }
 
     const gene = idGenerator();
-    return function () {
-        return gene.next().value;
-    }
+    return () => gene.next().value;
 })()
 
 class Tree {
@@ -91,10 +89,11 @@ class Tree {
         let removedNode = null;
         if (nameOrId instanceof Tree) {
             this.#children.delete(nameOrId.idOfNode);
+            removedNode = nameOrId;
         } else {
-            for (let child of this.#children) {
+            for (let child of this.childrenNode) {
                 if (child.name === nameOrId || child.idOfNode === nameOrId) {
-                    this.#children.delete(nameOrId.idOfNode);
+                    this.#children.delete(child.idOfNode);
                     removedNode = child;
                     break;
                 }
@@ -104,6 +103,49 @@ class Tree {
             removedNode.parentNode = null;
         }
 
+    }
+
+    appendChildNode (node) {
+        if (!(node instanceof Tree) || this.hasChildNode(node)) return;
+        if (node === this) throw new Error('Node cannot contain itself');
+
+        let parentNode = this.parentNode;
+        while (parentNode !== null) {
+            if (parentNode == node) throw new Error('Node cannot contain its ansistor');
+            parentNode = parentNode.parentNode;
+        }
+        this.#children.set(node.idOfNode, node);
+        this.parentNode = this;
+    }
+
+    traversal (cb) {
+        for (let child of this.childrenNode) {
+            if (cb(child) === true || child.traversal(cb) === true) {
+                return true;
+            }
+        }
+    }
+
+    findNodeByName (name) {
+        let nodeFound = null;
+        this.traversal((node) => {
+            if (node.name === name) {
+                nodeFound = node;
+                return true;
+            }
+        });
+        return nodeFound;
+    }
+
+    findAllNodeByName (name) {
+        let nodeFound = [];
+        this.traversal((node) => {
+            if (node.name === name) {
+                nodeFound.push(node);
+                return true;
+            }
+        });
+        return nodeFound;
     }
 
     #getTree (node, spaceCode = 0) {
@@ -126,5 +168,6 @@ const pre = tree.createChildNode('pre')
 tree.createChildNode('one')
     .createChildNode('twos');
 
-tree.removeNode('one')
+tree.removeNode("one")
+console.log(tree.hasChildNode("one").parentNode)
 console.log(tree.print());
