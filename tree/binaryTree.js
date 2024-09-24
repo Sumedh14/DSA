@@ -3,13 +3,13 @@ class BST {
     #compare = null;
 
     constructor (compareFun = null) {
-        if (!compareFun || typeof compareFun === 'function') {
+        if (compareFun || typeof compareFun === 'function') {
             this.#compare = compareFun;
         } else {
             this.#compare = (a, b) => {
-                if (a > b) return BST.comparison.BIGGER;
-                if (a < b) return BST.comparison.SMALLER;
-                return BST.comparison.EQUAL;
+                if (a > b) return BST.comparison.BIGGER
+                if (a < b) return BST.comparison.SMALLER
+                return BST.comparison.EQUAL
             }
         }
     }
@@ -21,9 +21,9 @@ class BST {
     static get comparison () {
         return Object.freeze({
             SMALLER: -1,
-            SMALLER_OR_EQUAL: [1, 0],
+            SMALLER_OR_EQUAL: [-1, 0],
             BIGGER: 1,
-            BIGGER_OR_EQUAL: [-1, 0],
+            BIGGER_OR_EQUAL: [1, 0],
             EQUAL: 0
         });
     }
@@ -37,17 +37,17 @@ class BST {
     }
 
     insert (value) {
-        let newNode = this.#createNode(value);
+        const newNode = this.#createNode(value);
         if (this.root === null) {
             this.#root = newNode;
         }
         else {
-            this.#insertNode(value);
+            this.#insertNode(newNode);
         }
     }
 
     #insertNode (newNode, currentNode = this.root) {
-        if (this.comparison.SMALLER_OR_EQUAL.include(this.#compare(newNode.key, currentNode.key))) {
+        if (BST.comparison.SMALLER === this.#compare(newNode.key, currentNode.key)) {
             if (currentNode.left === null) {
                 currentNode.left = newNode;
             } else {
@@ -61,6 +61,18 @@ class BST {
             }
         }
     }
+
+    invertTree (node = this.root) {
+        if (node === null) return null;
+
+        console.log(node.key);
+        const newNode = new BST().insert(node.key);
+        console.log(node.left);
+        newNode.right = this.invertTree(node.left);
+        newNode.left = this.invertTree(node.right);
+        return newNode;
+    }
+
 
     print () {
         this.#printNode();
@@ -123,3 +135,21 @@ class BST {
         }
     }
 }
+
+const tree = new BST()
+
+tree.insert(20);
+tree.insert(10);
+tree.insert(15);
+tree.insert(30);
+tree.insert(40);
+tree.insert(35);
+tree.insert(18);
+
+
+tree.print();
+
+tree.invertTree();
+
+tree.print()
+
