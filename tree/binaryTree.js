@@ -73,6 +73,62 @@ class BST {
         return newNode;
     }
 
+    // Maximum depth of tree DFS RECURSIVE 
+
+    depthOftreeDFSr (node = this.root) {
+        if (node === null) {
+            return 0;
+        }
+        return 1 + Math.max(this.depthOftreeDFSr(node.left), this.depthOftreeDFSr(node.right));
+    }
+
+    // DFS itterative
+    depthOftreeDFSI () {
+        let stack = [[this.root, 1]];
+        let depth = 0;
+        while (stack.length > 0) {
+            let current = stack.pop();
+            let node = current[0];
+            let res = current[1];
+
+            if (node !== null) {
+                depth = Math.max(res, depth);
+                stack.push([node.left, res + 1]);
+                stack.push([node.right, res + 1]);
+            }
+        }
+        return depth;
+    }
+
+
+    // bfs 
+
+    depthOftreeBFSI () {
+        let stack = [];
+        if (this.root === null) {
+            return 0;
+        }
+        if (this.root !== null) {
+            stack.push(this.root);
+        }
+        let level = 0;
+        while (stack.length > 0) {
+            let size = stack.length;
+
+            for (let i = 0; i < size; i++) {
+                let node = stack.shift();
+                if (node.left !== null) {
+                    stack.push(node.left);
+                }
+                if (node.right !== null) {
+                    stack.push(node.right);
+                }
+            }
+            level++;
+        }
+        return level;
+    }
+
 
     print () {
         this.#printNode();
@@ -149,7 +205,12 @@ tree.insert(18);
 
 tree.print();
 
-tree.invertTree();
+const valuer = tree.depthOftreeDFSr();
+const valuei = tree.depthOftreeDFSI();
+const valueb = tree.depthOftreeBFSI();
+tree.invertingTree();
 
-tree.print()
-
+console.log(valueb);
+console.log(valuer);
+console.log(valuei);
+// console.log(valueI);
