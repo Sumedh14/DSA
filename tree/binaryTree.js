@@ -130,6 +130,48 @@ class BST {
     }
 
 
+    // Hight of Tree
+
+    hightofTree (node = this.root) {
+        let lefthight = 0;
+        let rightHight = 0;
+        let height = 0;
+
+        if (node === null) {
+            return 0;
+        }
+
+        lefthight = this.hightofTree(node.left);
+        rightHight = this.hightofTree(node.right);
+
+        if (lefthight > rightHight) {
+            height = lefthight + 1;
+        } else {
+            height = rightHight + 1;
+        }
+        return height;
+    }
+
+    // Diameter of Binary Tree
+
+    diameterOfTree (node = this.root) {
+        if (!node) return 0;
+        let res = 0;
+
+        const dfs = (node) => {
+            if (!node) return 0;
+
+            let left = dfs(node.left);
+            let right = dfs(node.right);
+            res = Math.max(res, left + right);
+            return 1 + Math.max(left, right);
+        }
+
+        dfs(node);
+        return res;
+    }
+
+    
     print () {
         this.#printNode();
     }
@@ -208,9 +250,11 @@ tree.print();
 const valuer = tree.depthOftreeDFSr();
 const valuei = tree.depthOftreeDFSI();
 const valueb = tree.depthOftreeBFSI();
-tree.invertingTree();
+// tree.invertingTree();
+
+const height = tree.hightofTree();
 
 console.log(valueb);
 console.log(valuer);
 console.log(valuei);
-// console.log(valueI);
+console.log(height);
