@@ -102,7 +102,21 @@ class BST {
 
 
     // bfs 
+    depthOftreeBFSi (node = this.root) {
+        let queue = [node];
+        while (queue.length > 0) {
+            const curr = queue.shift();
+            console.log(curr.key);
+            if (curr.left !== null) {
+                queue.push(curr.left);
+            }
+            if (curr.right !== null) {
+                queue.push(curr.right);
+            }
+        }
+    }
 
+    // bfs 
     depthOftreeBFSI () {
         let stack = [];
         if (this.root === null) {
@@ -186,6 +200,18 @@ class BST {
             }
         }
         return result;
+    }
+
+    // size of binary tree
+
+    siteOfTree (node = this.root) {
+        const count = 0;
+        const size = (node) => {
+            if (node === null) return 0;
+            return 1 + size(node.left) + size(node.left);
+        }
+        count = size(node);
+        return count;
     }
 
     print () {
