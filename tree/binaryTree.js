@@ -171,7 +171,23 @@ class BST {
         return res;
     }
 
-    
+    // Print nodes at k distance from root
+
+    printNodeAtKDistance (node = this.root, k) {
+        const result = [];
+        const nodeK = (node, k) => {
+            if (node === null) return;
+            if (k === 0) {
+                result.push(node.key);
+            }
+            else {
+                nodeK(node.left, k - 1);
+                nodeK(node.right, k - 1);
+            }
+        }
+        return result;
+    }
+
     print () {
         this.#printNode();
     }
@@ -245,7 +261,7 @@ tree.insert(35);
 tree.insert(18);
 
 
-tree.print();
+// tree.print();
 
 const valuer = tree.depthOftreeDFSr();
 const valuei = tree.depthOftreeDFSI();
@@ -253,8 +269,10 @@ const valueb = tree.depthOftreeBFSI();
 // tree.invertingTree();
 
 const height = tree.hightofTree();
+const valueD = tree.diameterOfTree();
 
 console.log(valueb);
 console.log(valuer);
 console.log(valuei);
 console.log(height);
+console.log(valueD);
