@@ -296,6 +296,24 @@ class BST {
         return (node.key === sum && this.childrenSum(node.left) && this.childrenSum(node.right));
     }
 
+    // Maximum width of binary tree
+
+    maximumWidthOfTree (node = this.root) {
+        if (node === null) return 0;
+        let max = 0;
+        let queue = [node];
+        while (queue.length > 0) {
+            let size = queue.length;
+            max = Math.max(max, size);
+            for (let i = 0; i < size; i++) {
+                const curr = queue.shift();
+                if (curr.left !== null) queue.push(curr.left);
+                if (curr.right !== null) queue.push(curr.right);
+            }
+        }
+        return max;
+    }
+
     print () {
         this.#printNode();
     }
