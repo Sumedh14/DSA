@@ -214,6 +214,39 @@ class BST {
         return count;
     }
 
+    // Balance binary tree
+
+    balanceBinaryTree (node = this.root) {
+        if (node === null) return 0;
+        let left = this.balanceBinaryTree(node.left);
+        if (left === -1) return -1;
+        let right = this.balanceBinaryTree(node.right);
+        if (right === -1) return -1;
+
+        if (Math.abs(left - right) > 1) {
+            return -1;
+        } else {
+            return 1 + Math.max(left, right);
+        }
+    }
+
+    // Maximum in binary tree
+
+    maximumInBinaryTree (node = this.root) {
+        let max = 0;
+
+        const maxNum = (node) => {
+            if (node === null) return -1;
+            else {
+                let res = Math.max(maxNum(node.left), maxNum(node.right));
+                return Math.max(node.key, res);
+            }
+        }
+
+        max = maxNum(node);
+        return max;
+    }
+
     print () {
         this.#printNode();
     }
