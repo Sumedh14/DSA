@@ -283,6 +283,19 @@ class BST {
             }
         }
     }
+
+    // children sum property of tree
+
+    childrenSum (node = this.root) {
+        if (node === null) return true;
+        if (node.left === null && node.right === null) return true;
+        let sum = 0;
+        if (node.left !== null) { sum += node.left.key; }
+        if (node.right !== null) { sum += node.right.key; }
+
+        return (node.key === sum && this.childrenSum(node.left) && this.childrenSum(node.right));
+    }
+
     print () {
         this.#printNode();
     }
