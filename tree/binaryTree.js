@@ -314,6 +314,25 @@ class BST {
         return max;
     }
 
+    // Binary to doubly link list
+    binaryToDLL (node = this.root) {
+        let prev = null;
+        const dLL = (node) => {
+            if (node === null) { return node; }
+            let head = dLL(node.left);
+            if (prev === null) { head = node }
+            else {
+                node.left = prev;
+                prev.right = node;
+            }
+            prev = node;
+            dLL(node.right);
+            return node;
+        }
+        const list = dLL(node);
+        return list;
+    }
+
     print () {
         this.#printNode();
     }
@@ -397,6 +416,9 @@ const valueb = tree.depthOftreeBFSI();
 const height = tree.hightofTree();
 const valueD = tree.diameterOfTree();
 
+const list = tree.binaryToDLL();
+
+console.log(list);
 console.log(valueb);
 console.log(valuer);
 console.log(valuei);
