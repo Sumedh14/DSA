@@ -333,6 +333,36 @@ class BST {
         return list;
     }
 
+    // Spiral Traversal
+
+    spiralTraversal (node = this.root) {
+        if (node === null) return node;
+        let queue = [node];
+        let stack = [];
+        let shift = false;
+        while (queue.length > 0) {
+            let size = queue.length;
+            for (let i = 0; i < size; i++) {
+                let curr = queue.shift();
+                if (shift) {
+                    stack.push(curr);
+                } else {
+                    console.log(curr.key);
+                }
+                if (curr.left !== null) { queue.push(curr.left) }
+                if (curr.right !== null) { queue.push(curr.right) }
+            }
+            if (shift) {
+                while (stack.length === 0) {
+                    console.log(curr.key);
+                    stack.pop();
+                }
+            }
+            shift = !shift;
+        }
+    }
+
+
     print () {
         this.#printNode();
     }
