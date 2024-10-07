@@ -247,6 +247,42 @@ class BST {
         return max;
     }
 
+    // left view of tree
+
+    leftViewR (node = this.root) {
+        let maxVal = 0
+        let l = 1;
+        const left = (node, l) => {
+            if (node === null) return;
+            if (maxVal > l) {
+                console.log(node.key);
+            }
+            left(node.left, l + 1);
+            left(node.right, l + 1);
+        }
+
+    }
+
+    leftViewI (node = this.root) {
+        if (node === null) return;
+        let queue = [node];
+        while (queue.length > 0) {
+            let size = queue.length;
+
+            for (let i = 0; i < size; i++) {
+                let curr = queue.shift;
+                if (i === 0) {
+                    console.log(curr.key);
+                }
+                if (curr.left !== null) {
+                    queue.push(curr.left);
+                }
+                if (curr.right !== null) {
+                    queue.push(curr.right);
+                }
+            }
+        }
+    }
     print () {
         this.#printNode();
     }
