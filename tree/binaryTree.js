@@ -362,6 +362,20 @@ class BST {
         }
     }
 
+    // Lowest common Ancestor(LCA)
+
+    lowestCommonAncestor (node = this.root, num1, num2) {
+        if (node === null) return null;
+        if (node.key == num1 || node.key == num2) return node;
+        let lca1 = lowestCommonAncestor(node.left, num1, num2);
+        let lca2 = lowestCommonAncestor(node.right, num1, num2);
+        if (lca1 !== null && lca2 !== null) return node;
+        if (lca1 !== null) {
+            return lca1;
+        } else {
+            return lca2;
+        }
+    }
 
     print () {
         this.#printNode();
