@@ -65,9 +65,7 @@ class BST {
     invertTree (node = this.root) {
         if (node === null) return null;
 
-        console.log(node.key);
-        const newNode = new BST().insert(node.key);
-        console.log(node.left);
+        const newNode = new BST(node.key);
         newNode.right = this.invertTree(node.left);
         newNode.left = this.invertTree(node.right);
         return newNode;
@@ -114,6 +112,7 @@ class BST {
                 queue.push(curr.right);
             }
         }
+        return node;
     }
 
     // bfs 
@@ -229,6 +228,36 @@ class BST {
             return 1 + Math.max(left, right);
         }
     }
+
+    // Same tree
+
+    isSameTree(node1,node2){
+        if(!node1 && !node2){
+            return true;
+        }
+        if(node1 && node2 && node1.val === node2.val){
+            return(this.isSameTree(node1.left,node2.left)&&this.isSameTree(node1.right&& node2.right));
+        }else{
+            return false;
+        }
+    }
+
+
+    // Subtree
+
+    isSubtree(root, subRoot) {
+        if( !root ) return false;
+        if(!subRoot) return true;
+
+        if(this.isSameTree(root,subRoot)){
+            return true;
+        }
+        return(
+            this.isSubtree(root.left,subRoot) ||
+            this.isSubtree(root.right,subRoot)
+        );
+    }
+
 
     // Maximum in binary tree
 
