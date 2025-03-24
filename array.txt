@@ -21,21 +21,21 @@ function inFusion(T, r, P, S, data) {
         }
     }
 
-    let val = 0
-    for (let i = 0; i < e.length; i++) {
-        for (let j = i; i < e.length; j++) {
-            val += e[j];
+let val = 0
+    for (let i = 0; i < m;  i++ ) {
+        for (let j = 0; j < P; j++) {
+            val += e[j + i];
         }
-        Ei.push((val / (P / S)))
+        Ei.push((val / (P / S)));
     }
 
-    Emax = Math.max(Ei);
+    Emax = Math.max(...Ei);
     return Emax;
 }
 
-const T = 3600;
+const T = 60;
 const r = 200;
-const P = 2;
+const P = 5;
 const S = 1;
 
 let val = inFusion(T, r, P, S, data);
