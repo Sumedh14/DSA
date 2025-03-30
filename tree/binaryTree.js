@@ -524,6 +524,28 @@ class BST {
         }
     }
 
+    //good Node
+
+    goodNodes() {
+        let count = 0;
+        let q = [];
+        let max = this.root.val;
+        q.push([this.root, max]);
+        while (q.length > 0) {
+            let [node, maxVal] = q.pop();
+            if (node.val >= maxVal) {
+                count++;
+            }
+            if (node.left) {
+                q.push([node.left, Math.max(maxVal, node.val)]);
+            }
+            if (node.right) {
+                q.push([node.right, Math.max(maxVal, node.val)]);
+            }
+        }
+        return count;
+    }
+
     print() {
         this.#printNode();
     }
