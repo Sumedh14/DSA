@@ -253,6 +253,32 @@ class BST {
         return result;
     }
 
+
+    findNodeDistance(k) {
+        let node = this.root
+        if (node === null) return 0;
+        let height = 0;
+        let stack = [];
+        stack.push([node, 0]);
+        while (stack.length > 0) {
+            let curr = stack.pop();
+            let node = curr[0];
+            let res = curr[1];
+
+            if (node) {
+                if (node.key === k) {
+                    height = res;
+                    break;
+                } else {
+                    if (node.left) stack.push([node.left, res + 1])
+                    if (node.right) stack.push([node.right, res + 1])
+                }
+            }
+
+        }
+        return height;
+    }
+
     // size of binary tree
 
     siteOfTree (node = this.root) {
@@ -542,7 +568,8 @@ const height = tree.hightofTree();
 const valueD = tree.diameterOfTree();
 
 const list = tree.binaryToDLL();
-const  zigzagLevelOrderTraversal = tree.zigzagLevelOrderTraversal();
+// const  zigzagLevelOrderTraversal = tree.zigzagLevelOrderTraversal();4
+const findNodeDistance = tree.findNodeDistance(40)
 
 console.log(list);
 console.log(valueb);
@@ -550,4 +577,5 @@ console.log(valuer);
 console.log(valuei);
 console.log(height);
 console.log(valueD);
-console.log(zigzagLevelOrderTraversal);
+// console.log(zigzagLevelOrderTraversal);
+console.log(findNodeDistance);
