@@ -2,7 +2,7 @@ class BST {
     #root = null;
     #compare = null;
 
-    constructor (compareFun = null) {
+    constructor(compareFun = null) {
         if (compareFun || typeof compareFun === 'function') {
             this.#compare = compareFun;
         } else {
@@ -14,11 +14,11 @@ class BST {
         }
     }
 
-    get root () {
+    get root() {
         return this.#root;
     }
 
-    static get comparison () {
+    static get comparison() {
         return Object.freeze({
             SMALLER: -1,
             SMALLER_OR_EQUAL: [-1, 0],
@@ -28,7 +28,7 @@ class BST {
         });
     }
 
-    #createNode (value) {
+    #createNode(value) {
         return Object.seal({
             key: value,
             right: null,
@@ -36,7 +36,7 @@ class BST {
         });
     }
 
-    insert (value) {
+    insert(value) {
         const newNode = this.#createNode(value);
         if (this.root === null) {
             this.#root = newNode;
@@ -46,7 +46,7 @@ class BST {
         }
     }
 
-    #insertNode (newNode, currentNode = this.root) {
+    #insertNode(newNode, currentNode = this.root) {
         if (BST.comparison.SMALLER === this.#compare(newNode.key, currentNode.key)) {
             if (currentNode.left === null) {
                 currentNode.left = newNode;
@@ -62,7 +62,7 @@ class BST {
         }
     }
 
-    invertTree (node = this.root) {
+    invertTree(node = this.root) {
         if (node === null) return null;
 
         const newNode = new BST(node.key);
@@ -73,7 +73,7 @@ class BST {
 
     // Maximum depth of tree DFS RECURSIVE 
 
-    depthOftreeDFSr (node = this.root) {
+    depthOftreeDFSr(node = this.root) {
         if (node === null) {
             return 0;
         }
@@ -81,7 +81,7 @@ class BST {
     }
 
     // DFS itterative
-    depthOftreeDFSI () {
+    depthOftreeDFSI() {
         let stack = [[this.root, 1]];
         let depth = 0;
         while (stack.length > 0) {
@@ -100,7 +100,7 @@ class BST {
 
 
     // bfs 
-    depthOftreeBFSi (node = this.root) {
+    depthOftreeBFSi(node = this.root) {
         let queue = [node];
         while (queue.length > 0) {
             const curr = queue.shift();
@@ -116,7 +116,7 @@ class BST {
     }
 
     // bfs 
-    depthOftreeBFSI () {
+    depthOftreeBFSI() {
         let stack = [];
         if (this.root === null) {
             return 0;
@@ -197,7 +197,7 @@ class BST {
 
     // Hight of Tree
 
-    hightofTree (node = this.root) {
+    hightofTree(node = this.root) {
         let lefthight = 0;
         let rightHight = 0;
         let height = 0;
@@ -217,9 +217,28 @@ class BST {
         return height;
     }
 
+
+    hightofTreeI(node = this.root) {
+        let stack = [];
+        let height = 0;
+        stack.push(node);
+        while (1 == 1) {
+            let size = stack.length;
+            if (size == 0) {
+                return size;
+            }
+            height++;
+            while (size-- > 0) {
+                let node1 = stack.pop();
+                if (node1.left) stack.push(node1.left);
+                if (node1.right) stack.push(node1.right);
+            }
+        }
+    }
+
     // Diameter of Binary Tree
 
-    diameterOfTree (node = this.root) {
+    diameterOfTree(node = this.root) {
         if (!node) return 0;
         let res = 0;
 
@@ -238,7 +257,7 @@ class BST {
 
     // Print nodes at k distance from root
 
-    printNodeAtKDistance (node = this.root, k) {
+    printNodeAtKDistance(node = this.root, k) {
         const result = [];
         const nodeK = (node, k) => {
             if (node === null) return;
@@ -281,7 +300,7 @@ class BST {
 
     // size of binary tree
 
-    siteOfTree (node = this.root) {
+    siteOfTree(node = this.root) {
         const count = 0;
         const size = (node) => {
             if (node === null) return 0;
@@ -293,7 +312,7 @@ class BST {
 
     // Balance binary tree
 
-    balanceBinaryTree (node = this.root) {
+    balanceBinaryTree(node = this.root) {
         if (node === null) return 0;
         let left = this.balanceBinaryTree(node.left);
         if (left === -1) return -1;
@@ -307,15 +326,36 @@ class BST {
         }
     }
 
+    balanceBinaryTreeI(node = this.root) {
+        let stack = [];
+        stack.push([node, 0]);
+        let MAXDEPTH = Number.MAX_SAFE_INTEGER;
+        let MINDEPTH = Number.MIN_SAFE_INTEGER;
+        while (stack.length > 0) {
+            let [node, res] = stack.pop();
+            if (node) {
+                if (!node.right && !node.left) {
+                    MAXDEPTH = Math.max(MAXDEPTH, res);
+                    MINDEPTH = Math.max(MINDEPTH, res);
+                    if (MAXDEPTH - MINDEPTH > 1) return false;
+                } else {
+                    stack.push([node.left, res + 1]);
+                    stack.push([node.right, res + 1]);
+                }
+            }
+        }
+        return true;
+    }
+
     // Same tree
 
-    isSameTree(node1,node2){
-        if(!node1 && !node2){
+    isSameTree(node1, node2) {
+        if (!node1 && !node2) {
             return true;
         }
-        if(node1 && node2 && node1.val === node2.val){
-            return(this.isSameTree(node1.left,node2.left)&&this.isSameTree(node1.right&& node2.right));
-        }else{
+        if (node1 && node2 && node1.val === node2.val) {
+            return (this.isSameTree(node1.left, node2.left) && this.isSameTree(node1.right && node2.right));
+        } else {
             return false;
         }
     }
@@ -324,22 +364,22 @@ class BST {
     // Subtree
 
     isSubtree(root, subRoot) {
-        if( !root ) return false;
-        if(!subRoot) return true;
+        if (!root) return false;
+        if (!subRoot) return true;
 
-        if(this.isSameTree(root,subRoot)){
+        if (this.isSameTree(root, subRoot)) {
             return true;
         }
-        return(
-            this.isSubtree(root.left,subRoot) ||
-            this.isSubtree(root.right,subRoot)
+        return (
+            this.isSubtree(root.left, subRoot) ||
+            this.isSubtree(root.right, subRoot)
         );
     }
 
 
     // Maximum in binary tree
 
-    maximumInBinaryTree (node = this.root) {
+    maximumInBinaryTree(node = this.root) {
         let max = 0;
 
         const maxNum = (node) => {
@@ -356,7 +396,7 @@ class BST {
 
     // left view of tree
 
-    leftViewR (node = this.root) {
+    leftViewR(node = this.root) {
         let maxVal = 0
         let l = 1;
         const left = (node, l) => {
@@ -370,7 +410,7 @@ class BST {
 
     }
 
-    leftViewI (node = this.root) {
+    leftViewI(node = this.root) {
         if (node === null) return;
         let queue = [node];
         while (queue.length > 0) {
@@ -393,7 +433,7 @@ class BST {
 
     // children sum property of tree
 
-    childrenSum (node = this.root) {
+    childrenSum(node = this.root) {
         if (node === null) return true;
         if (node.left === null && node.right === null) return true;
         let sum = 0;
@@ -405,7 +445,7 @@ class BST {
 
     // Maximum width of binary tree
 
-    maximumWidthOfTree (node = this.root) {
+    maximumWidthOfTree(node = this.root) {
         if (node === null) return 0;
         let max = 0;
         let queue = [node];
@@ -422,7 +462,7 @@ class BST {
     }
 
     // Binary to doubly link list
-    binaryToDLL (node = this.root) {
+    binaryToDLL(node = this.root) {
         let prev = null;
         const dLL = (node) => {
             if (node === null) { return node; }
@@ -442,7 +482,7 @@ class BST {
 
     // Spiral Traversal
 
-    spiralTraversal (node = this.root) {
+    spiralTraversal(node = this.root) {
         if (node === null) return node;
         let queue = [node];
         let stack = [];
@@ -471,7 +511,7 @@ class BST {
 
     // Lowest common Ancestor(LCA)
 
-    lowestCommonAncestor (node = this.root, num1, num2) {
+    lowestCommonAncestor(node = this.root, num1, num2) {
         if (node === null) return null;
         if (node.key == num1 || node.key == num2) return node;
         let lca1 = lowestCommonAncestor(node.left, num1, num2);
@@ -484,21 +524,21 @@ class BST {
         }
     }
 
-    print () {
+    print() {
         this.#printNode();
     }
 
-    traverseInorder (cb) {
+    traverseInorder(cb) {
         this.#inOrder(this.root, cb);
     }
-    traversePreOrder (cb) {
+    traversePreOrder(cb) {
         this.#preOrder(this.root, cb);
     }
-    traversePostOrder (cb) {
+    traversePostOrder(cb) {
         this.#postOrder(this.root, cb);
     }
 
-    #inOrder (node, cb) {
+    #inOrder(node, cb) {
         if (node !== null) {
             this.#inOrder(node.left, cb);
             cb(node.key);
@@ -506,7 +546,7 @@ class BST {
         }
     }
 
-    #preOrder (node, cb) {
+    #preOrder(node, cb) {
         if (node !== null) {
             cb(node.key);
             this.#preOrder(node.left, cb);
@@ -514,7 +554,7 @@ class BST {
         }
     }
 
-    #postOrder (node, cb) {
+    #postOrder(node, cb) {
         if (node !== null) {
             this.#postOrder(node.left, cb);
             this.#postOrder(node.right, cb);
@@ -522,11 +562,11 @@ class BST {
         }
     }
 
-    search (value) {
+    search(value) {
         this.#searchTree(value);
     }
 
-    #searchTree (value, node = this.root) {
+    #searchTree(value, node = this.root) {
         if (node === null) return false;
         if (this.#compare(value, node.key) === BST.comparison.EQUAL) return true;
         if (this.#compare(value, node.key) === BST.comparison.SMALLER) {
@@ -535,7 +575,7 @@ class BST {
         return this.#searchTree(value, node.right);
     }
 
-    #printNode (node = this.root, spaceCount = 0, lable = '* ') {
+    #printNode(node = this.root, spaceCount = 0, lable = '* ') {
         if (node === null) {
             return console.log(`${' -'.repeat(spaceCount)}${lable}null`);
         } else {
