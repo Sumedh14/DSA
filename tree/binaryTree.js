@@ -143,6 +143,58 @@ class BST {
     }
 
 
+    //level order 
+    levelOrder(node = this.root) {
+        let res = []
+        if (!node) return res;
+
+        const q = new Queue();
+        q.push(node);
+        while (!q.isEmpty()) {
+            let level = [];
+            for (let i = q.size(); i > 0; i--) {
+                let node1 = q.pop();
+                if (node1 !== null) {
+                    level.push(node1.val);
+                    q.push(node1.left);
+                    q.push(node1.right);
+                }
+            }
+            if (level.length > 0) {
+                res.push(level);
+            }
+        }
+        return res;
+    }
+
+    zigzagLevelOrderTraversal(node = this.root) {
+        const res = [];
+        if (!node) return res;
+        let stack = [];
+        let next = [];
+        let leftToRight = true;
+
+        stack.push(node);
+        while (stack.length > 0) {
+            let size = stack.length;
+            while (size-- > 0) {
+                let curr = stack.pop();
+                res.push(curr.val);
+
+                if (leftToRight) {
+                    if (curr.left) next.push(curr.left);
+                    if (curr.right) next.push(curr.right);
+                } else {
+                    if (curr.right) next.push(curr.right);
+                    if (curr.left) next.push(curr.left);
+                }
+            }
+            leftToRight = !leftToRight;
+            [stack, next] = [next, stack];
+        }
+        return res;
+    }
+
     // Hight of Tree
 
     hightofTree (node = this.root) {
@@ -490,6 +542,7 @@ const height = tree.hightofTree();
 const valueD = tree.diameterOfTree();
 
 const list = tree.binaryToDLL();
+const  zigzagLevelOrderTraversal = tree.zigzagLevelOrderTraversal();
 
 console.log(list);
 console.log(valueb);
@@ -497,3 +550,4 @@ console.log(valuer);
 console.log(valuei);
 console.log(height);
 console.log(valueD);
+console.log(zigzagLevelOrderTraversal);
