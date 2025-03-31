@@ -546,6 +546,35 @@ class BST {
         return count;
     }
 
+    // Valid Binary tree
+    validBinaryTree(node = this.root) {
+        const validTree = (node, left, right) => {
+            if (!node) return true;
+            if (!(node.key > left && node.key < right)) {
+                return false
+            }
+            return validTree(node.left, left, node.key) && validTree(node.right, node.key, right);
+        }
+        return validTree(node, -Infinity, Infinity);
+    }
+
+    validBinaryTreeI(node = this.root) {
+        let stack = [];
+        stack.push([node, -Infinity, Infinity]);
+        while (stack.length > 0) {
+            let [node, left, right] = stack.pop();
+            if (node) {
+                if (!(node.key > left && node.key < right)) {
+                    return false;
+                } else {
+                    stack.push([node.left, left, node.val]);
+                    stack.push([node.left, node.val, right]);
+                }
+            }
+        }
+        return true;
+    }
+
     print() {
         this.#printNode();
     }
