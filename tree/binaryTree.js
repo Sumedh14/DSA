@@ -575,6 +575,43 @@ class BST {
         return true;
     }
 
+    // Kth Smallers number
+    kthSmallestR(k) {
+        let temp = new Array(2);
+        temp[0] = k;
+        let node = this.root;
+        const small = (node, temp) => {
+            if (!node) return;
+            small(node.left, temp);
+            temp[0]--;
+            if (temp[0] === 0) {
+                temp[1] = node.val;
+                return;
+            }
+            small(node.right, temp);
+        }
+        small(node, temp)
+        return temp[1];
+    }
+
+    kthSmallestI(root, k) {
+        let stack = [];
+        stack.push(root);
+        while (stack.length > 0) {
+            let node = stack.pop();
+            while (node !== null) {
+                stack.push(node);
+                node = node.left;
+            }
+            node = stack.pop();
+            k--;
+            if(k === 0){
+                return node.val;
+            }
+            stack.push(node.right);
+        }
+    }
+
     print() {
         this.#printNode();
     }
@@ -661,7 +698,7 @@ const valueD = tree.diameterOfTree();
 const list = tree.binaryToDLL();
 // const  zigzagLevelOrderTraversal = tree.zigzagLevelOrderTraversal();4
 const findNodeDistance = tree.findNodeDistance(40)
-
+const kthSmallest = tree.kthSmallest(3);
 console.log(list);
 console.log(valueb);
 console.log(valuer);
@@ -670,3 +707,4 @@ console.log(height);
 console.log(valueD);
 // console.log(zigzagLevelOrderTraversal);
 console.log(findNodeDistance);
+console.log(kthSmallest);
