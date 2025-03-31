@@ -605,11 +605,29 @@ class BST {
             }
             node = stack.pop();
             k--;
-            if(k === 0){
+            if (k === 0) {
                 return node.val;
             }
             stack.push(node.right);
         }
+    }
+
+    // Build tree from preOrder and Inorder array
+
+    buildTree(preorder, inorder) {
+        let preInd = 0, inInd = 0;
+        let delf = (val) => {
+            if (preInd >= preorder.length) return null;
+            if (inorder[inInd] === val) {
+                inInd++;
+                return null;
+            }
+            let root = new TreeNode(preorder[preInd++]);
+            root.left = delf(root.val);
+            root.right = delf(val);
+            return root;
+        }
+        return delf(Infinity);
     }
 
     print() {
