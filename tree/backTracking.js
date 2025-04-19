@@ -142,6 +142,38 @@ function permute(nums) {
     permut(nums,result,subset,arr)
     return result;
 }
+
+
+// Serach Word
+
+function exist(board, word) {
+
+    const ROW = board.length;
+    const COL = board[0].length;
+    const result = new Set();
+    const dfs = (r, c, i) => {
+        if(i === word.length){return true;}
+        if(r<0 || c<0 || r>=ROW || c>= COL || board[r][c]!== word[i] || result.has(`${r},${c}`)){
+            return false;
+        }
+        result.add(`${r},${c}`);
+        const res = dfs(r+1,c,i+1) ||
+                    dfs(r-1,c,i+1) ||
+                    dfs(r,c+1,i+1) ||
+                    dfs(r,c-1,i+1);
+        result.delete(`${r},${c}`);
+        return res;
+    }
+
+    for (let r = 0; r < ROW; r++) {
+        for (let c = 0; c < COL; c++) {
+            if (dfs(r, c, 0)) return true;
+        }
+    }
+    return false;
+}
+
+
 let nums = [1, 2, 3]
 
 
