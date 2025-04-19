@@ -29,7 +29,7 @@ function subsetsI(nums) {
     for (let num of nums) {
         let size = result.length;
         for (let i = 0; i < size; i++) {
-            let sub = result[i].spice();
+            let sub = result[i].slice();
             sub.push(num);
             result.push(sub);
         }
@@ -60,7 +60,62 @@ function combinationSum(nums, target) {
     return result;
 }
 
+//combination sum 2
 
+function combinationSumTow(nums,target){
+    let result = [];
+    let subset = [];
+    nums.sort((a,b)=>a-b);
+    const subs = (nums,target,result,subset,count) =>{
+        if(target == 0){
+            result.push([...subset]);
+            return;
+        }else if(target<0 || count >= nums.length){
+            return;
+        }else{
+            subset.push(nums[count]);
+            subs(nums,target-nums[count],result,subset,count+1);
+            subset.pop();
+            while(nums[count] == nums[count+1]){
+                count++;
+            }
+            subs(nums,target,result,subset,count+1);
+        }
+
+    }
+
+    subs(nums,target,result,subset,0);
+    return result;
+}
+
+
+
+function permute(nums) {
+    const result = [];
+    const subset = [];
+    const arr = new Array(nums.length).fill(false);
+
+    const permut = (nums,result,subset,arr) =>{
+        if(subset.length == nums.length){
+            result.push([...subset]);
+            return;
+        }else{
+            for(let i = 0; i<nums.length;i++){
+                if(!arr[i]){
+                    subset.push(nums[i]);
+                    arr[i] = true;
+                    permut(nums,result,subset,arr);
+                    subset.pop();
+                    arr[i] = false;
+                }
+            }
+        }
+
+    }
+
+    permut(nums,result,subset,arr)
+    return result;
+}
 let nums = [1, 2, 3]
 
 
