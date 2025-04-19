@@ -38,6 +38,32 @@ function subsetsI(nums) {
 }
 
 
+// subsets 2
+
+function subsetsWithDup(nums) {
+    let result = [];
+    let subset = [];
+    nums.sort((a,b)=>a-b);
+    
+    const subsetsWithDups = (nums,result,subset,count)=>{
+        if(count >= nums.length){
+            result.push([...subset]);
+        }
+        else{
+            subset.push(nums[count]);
+            subsetsWithDups(nums,result,subset,count+1);
+            subset.pop();
+            while(nums[count]=== nums[count+1]){
+                count++;
+            }
+            subsetsWithDups(nums,result,subset,count+1);
+        }
+    }
+
+    subsetsWithDups(nums,result,subset,0)
+    return result;
+}
+
 //combination sum 
 
 function combinationSum(nums, target) {
