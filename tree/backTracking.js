@@ -43,24 +43,24 @@ function subsetsI(nums) {
 function subsetsWithDup(nums) {
     let result = [];
     let subset = [];
-    nums.sort((a,b)=>a-b);
-    
-    const subsetsWithDups = (nums,result,subset,count)=>{
-        if(count >= nums.length){
+    nums.sort((a, b) => a - b);
+
+    const subsetsWithDups = (nums, result, subset, count) => {
+        if (count >= nums.length) {
             result.push([...subset]);
         }
-        else{
+        else {
             subset.push(nums[count]);
-            subsetsWithDups(nums,result,subset,count+1);
+            subsetsWithDups(nums, result, subset, count + 1);
             subset.pop();
-            while(nums[count]=== nums[count+1]){
+            while (nums[count] === nums[count + 1]) {
                 count++;
             }
-            subsetsWithDups(nums,result,subset,count+1);
+            subsetsWithDups(nums, result, subset, count + 1);
         }
     }
 
-    subsetsWithDups(nums,result,subset,0)
+    subsetsWithDups(nums, result, subset, 0)
     return result;
 }
 
@@ -88,29 +88,29 @@ function combinationSum(nums, target) {
 
 //combination sum 2
 
-function combinationSumTow(nums,target){
+function combinationSumTow(nums, target) {
     let result = [];
     let subset = [];
-    nums.sort((a,b)=>a-b);
-    const subs = (nums,target,result,subset,count) =>{
-        if(target == 0){
+    nums.sort((a, b) => a - b);
+    const subs = (nums, target, result, subset, count) => {
+        if (target == 0) {
             result.push([...subset]);
             return;
-        }else if(target<0 || count >= nums.length){
+        } else if (target < 0 || count >= nums.length) {
             return;
-        }else{
+        } else {
             subset.push(nums[count]);
-            subs(nums,target-nums[count],result,subset,count+1);
+            subs(nums, target - nums[count], result, subset, count + 1);
             subset.pop();
-            while(nums[count] == nums[count+1]){
+            while (nums[count] == nums[count + 1]) {
                 count++;
             }
-            subs(nums,target,result,subset,count+1);
+            subs(nums, target, result, subset, count + 1);
         }
 
     }
 
-    subs(nums,target,result,subset,0);
+    subs(nums, target, result, subset, 0);
     return result;
 }
 
@@ -121,16 +121,16 @@ function permute(nums) {
     const subset = [];
     const arr = new Array(nums.length).fill(false);
 
-    const permut = (nums,result,subset,arr) =>{
-        if(subset.length == nums.length){
+    const permut = (nums, result, subset, arr) => {
+        if (subset.length == nums.length) {
             result.push([...subset]);
             return;
-        }else{
-            for(let i = 0; i<nums.length;i++){
-                if(!arr[i]){
+        } else {
+            for (let i = 0; i < nums.length; i++) {
+                if (!arr[i]) {
                     subset.push(nums[i]);
                     arr[i] = true;
-                    permut(nums,result,subset,arr);
+                    permut(nums, result, subset, arr);
                     subset.pop();
                     arr[i] = false;
                 }
@@ -139,7 +139,38 @@ function permute(nums) {
 
     }
 
-    permut(nums,result,subset,arr)
+    permut(nums, result, subset, arr)
+    return result;
+}
+
+function permuteTwo(nums) {
+    const result = [];
+    const subset = [];
+
+    const arr = new Array(nums.lenght).fill(false);
+    nums.sort((a, b) => a - b);
+    const permut = (nums, result, subset, arr) => {
+        if (subset.length == nums.length) {
+            result.push([...subset]);
+            return;
+        } else {
+            for (let i = 0; i < nums.length; i++) {
+                if (arr[i] || (i > 0 && nums[i] === nums[i - 1] && !arr[i- 1])) {
+                    continue;
+                }
+                if (!arr[i]) {
+                    subset.push(nums[i]);
+                    arr[i] = true;
+                    permut(nums, result, subset, arr);
+                    subset.pop();
+                    arr[i] = false;
+
+                }
+            }
+        }
+    }
+
+    permut(nums, result, subset, arr);
     return result;
 }
 
@@ -152,15 +183,15 @@ function exist(board, word) {
     const COL = board[0].length;
     const result = new Set();
     const dfs = (r, c, i) => {
-        if(i === word.length){return true;}
-        if(r<0 || c<0 || r>=ROW || c>= COL || board[r][c]!== word[i] || result.has(`${r},${c}`)){
+        if (i === word.length) { return true; }
+        if (r < 0 || c < 0 || r >= ROW || c >= COL || board[r][c] !== word[i] || result.has(`${r},${c}`)) {
             return false;
         }
         result.add(`${r},${c}`);
-        const res = dfs(r+1,c,i+1) ||
-                    dfs(r-1,c,i+1) ||
-                    dfs(r,c+1,i+1) ||
-                    dfs(r,c-1,i+1);
+        const res = dfs(r + 1, c, i + 1) ||
+            dfs(r - 1, c, i + 1) ||
+            dfs(r, c + 1, i + 1) ||
+            dfs(r, c - 1, i + 1);
         result.delete(`${r},${c}`);
         return res;
     }
@@ -176,9 +207,13 @@ function exist(board, word) {
 
 let nums = [1, 2, 3]
 
-
+let numsP = [1, 1, 2];
+let permuteR = permute(numsP);
+let permuteT = permuteTwo(numsP);
 let combination = combinationSum(nums, 4);
 let valR = subsetsR(nums);
 let valI = subsetsI(nums);
 console.log(valR);
 console.log(combination);
+console.log("permuteR", permuteR);
+console.log("permuteT", permuteT);
