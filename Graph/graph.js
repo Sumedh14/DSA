@@ -1,76 +1,77 @@
 class Graph {
     constructor() {
-        this.adjacenctList = {};
+        this.adjacenctList = new Map();
     }
 
     addVertex(value) {
         if (!this.adjacenctList.has(value)) {
-            this.adjacenctList[value] = [];
+            this.adjacenctList.set(value,[]) ;
         }
     }
 
     addEdges(source, destination) {
-        if (!this.adjacenctList[source]) {
+        if (!this.adjacenctList.has(source)) {
             this.addVertex(source);
         }
-        if (!this.adjacenctList[destination]) {
+        if (!this.adjacenctList.has(destination)) {
             this.addVertex(destination);
         }
 
-        if (this.adjacenctList[source] && this.adjacenctList[destination]) {
-            this.adjacenctList[source].push(destination);
-            this.adjacenctList[destination].push(source);
+        if (this.adjacenctList.has(source) && this.adjacenctList.has(destination)) {
+            this.adjacenctList.get(source).push(destination);
+            this.adjacenctList.get(destination).push(source);
         }
     }
 
     removeEdges(source, destination) {
-        this.adjacenctList[source] = this.adjacenctList[source].filter((val) => { val !== destination })
-        this.adjacenctList[destination] = this.adjacenctList[destination].filter((val) => { val !== source })
+        this.adjacenctList.get(source).filter((val) => { val !== destination })
+        this.adjacenctList.get(destination).filter((val) => { val !== source })
     }
 
     removeVertex(value) {
-        if (this.adjacenctList[value]) {
-            this.adjacenctList[value].forEach(destination => {
+        if (this.adjacenctList.has(value)) {
+            this.adjacenctList.get(value).forEach(destination => {
                 this.removeEdges(value, destination);
             });
         }
-        delete this.adjacenctList[value];
+        this.adjacenctList.delete(value);
     }
 
 
     breathFirstSerach(value) {
-        const visited = {};
+        const visited = new Set();
         const queue = [value];
         const result = [];
+        visited.add(value);
 
         while (queue.length > 0) {
             let current = queue.shift();
-            if (this.adjacenctList[current]) {
+            if (this.adjacenctList.has(current)) {
                 result.push(current);
-                this.adjacenctList[current].forEach((val) => {
+                this.adjacenctList.get(current).forEach((val) => {
                     if (!visited.has(val)) {
-                        visited[val] = true;
-                        queue, push(val);
+                        visited.add(val);
+                        queue.push(val);
                     }
                 })
             }
-            return result;
         }
+        return result;
     }
 
     depthFirstSearch(value) {
-        const visited = {};
+        const visited = new Set();
         const stack = [value];
         const result = [];
-        visited[value] = true;
+        visited.add(value);
 
         while (stack.length > 0) {
             let current = stack.pop();
-            if (this.adjacenctList[current]) {
+            if (this.adjacenctList.has(current)) {
                 result.push(current);
-                this.adjacenctList[current].forEach((val) => {
-                    if (!visited[val]) {
-                        visited[val] = true;
+                this.adjacenctList.get(current).forEach((val) => {
+                    if (!visited.has(val)) {
+                        visited.add(val);
                         stack.push(val);
                     }
                 })
@@ -79,3 +80,13 @@ class Graph {
         return result;
     }
 }
+
+let graph = new Graph();
+
+graph.addEdges(0, 1);
+graph.addEdges(0, 2);
+graph.addEdges(1, 2);
+graph.addEdges(2, 3);
+
+console.log("dfs",graph.depthFirstSearch(0));
+console.log("bfs",graph.breathFirstSerach(0));
