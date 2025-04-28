@@ -5,7 +5,7 @@ class Graph {
 
     addVertex(value) {
         if (!this.adjacenctList.has(value)) {
-            this.adjacenctList.set(value,[]) ;
+            this.adjacenctList.set(value, []);
         }
     }
 
@@ -79,14 +79,60 @@ class Graph {
         }
         return result;
     }
+
+    // cycliy dfs undirected graph
+
+    cyclicDfsUndirected(start) {
+
+        /*
+        {
+            0 -> [1,2]
+            1 -> [0,2]
+            2 -> [0,1,3]
+            3 -> [2]
+        }
+        */
+        let visited = new Set();
+        let stack = [];
+        let result = false;
+        stack.push([start, -1]);
+
+        const dfs = (adjacenctList, stack, visited) => {
+            visited.add(start);
+            while (stack.length > 0) {
+                let [curr, parent] = stack.pop();
+                for (const adj of adjacenctList.get(curr)) {
+                    if (adj == parent) { continue; }
+                    if (!visited.has(adj)) {
+                        stack.push([adj, curr]);
+                        visited.add(adj);
+                        result = false;
+                    }else if (adj !== parent && visited.has(adj)) {
+                        result = true;
+                    }
+                }
+            }
+            return result;
+        }
+        return dfs(this.adjacenctList, stack, visited);
+    }
 }
 
 let graph = new Graph();
 
-graph.addEdges(0, 1);
+// graph.addEdges(0, 1);
+// graph.addEdges(0, 2);
+// graph.addEdges(1, 2);
+// graph.addEdges(2, 3);
+// graph.addEdges(0, 1);
+// graph.addEdges(1, 2);
+// graph.addEdges(2, 3); 
+// graph.addEdges(3, 0); 
+graph.addEdges(0, 4);
 graph.addEdges(0, 2);
-graph.addEdges(1, 2);
-graph.addEdges(2, 3);
+graph.addEdges(1, 2); 
+graph.addEdges(2, 3); 
 
-console.log("dfs",graph.depthFirstSearch(0));
-console.log("bfs",graph.breathFirstSerach(0));
+console.log("dfs", graph.depthFirstSearch(0));
+console.log("bfs", graph.breathFirstSerach(0));
+console.log("cyclicDfsUndirected", graph.cyclicDfsUndirected(0));
