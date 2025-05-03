@@ -9,16 +9,16 @@ class Graph {
         }
     }
 
-    addEdges(source, destination) {
+    addEdges(source, destination, directed) {
         if (!this.adjacenctList.has(source)) {
             this.addVertex(source);
         }
         if (!this.adjacenctList.has(destination)) {
             this.addVertex(destination);
         }
+        this.adjacenctList.get(source).push(destination);
 
-        if (this.adjacenctList.has(source) && this.adjacenctList.has(destination)) {
-            this.adjacenctList.get(source).push(destination);
+        if (!directed && this.adjacenctList.has(source) && this.adjacenctList.has(destination)) {
             this.adjacenctList.get(destination).push(source);
         }
     }
@@ -160,7 +160,7 @@ class Graph {
             visited.add(start);
             for (const neigbhour of graph.get(start)) {
                 if (!visited.has(neigbhour)) {
-                    if (dfs(neigbhour, parent)) {
+                    if (dfs(neigbhour, start)) {
                         return true;
                     }
                 } else if (neigbhour !== parent) {
@@ -209,6 +209,38 @@ class Graph {
         }
         return false;
     }
+
+
+    cyclicDfsDirectedRecursive(graph = this.adjacenctList) {
+        const visited = new Set();
+        const inRecurssion = new Array(graph.size).fill(false);
+
+        const dfs = (start, graph, visited, inRecurssion) => {
+            visited.add(start);
+            inRecurssion[start] = true;
+            for (const neigbhour of graph.get(start)) {
+                if (!visited.has(neigbhour)) {
+                    if (dfs(neigbhour, graph, visited, inRecurssion)) {
+                        return true;
+                    }
+                }
+                if (inRecurssion[neigbhour]) {
+                    return true;
+                }
+            }
+            inRecurssion[start] = false;
+            return false;
+        }
+
+        for (let i = 0; i < graph.size; i++) {
+            if (!visited.has(i)) {
+                if (dfs(i, graph, visited, inRecurssion)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
 
 
@@ -231,17 +263,22 @@ let graph = new Graph();
 // graph.addEdges(2, 3);
 // graph.addEdges(3, 1);
 
-graph.addEdges(0, 1);
-graph.addEdges(1, 2);
-graph.addVertex(4);
-graph.addEdges(5, 3);
-graph.addEdges(5, 6);
-graph.addEdges(6, 3);
+// graph.addEdges(0, 1, false);
+// graph.addEdges(1, 2, false);
+// graph.addVertex(4);
+// graph.addEdges(5, 3, false);
+// graph.addEdges(5, 6, false);
+
+graph.addEdges(0, 1, true);
+graph.addEdges(1, 2, true);
+graph.addEdges(2, 0, true);
+
 
 
 // console.log("dfs", graph.depthFirstSearch(0));
 // console.log("bfs", graph.breathFirstSerach(0));
 // console.log("cyclicDfsUndirected", graph.cyclicDfsUndirected(0));
 // console.log("cyclicDfsUndirected", graph.cyclicBfsUndirected());
-console.log("cyclicDfsUndirected", graph.cyclicDfsUndirectedTwo());
-console.log("cyclicDfsUndirected", graph.cyclicDfsUndirectedRecursive());
+// console.log("cyclicDfsUndirected", graph.cyclicDfsUndirectedTwo());
+// console.log("cyclicDfsUndirected", graph.cyclicDfsUndirectedRecursive());
+console.log("cyclicDfsDirected", graph.cyclicDfsDirectedRecursive());
