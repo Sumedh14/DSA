@@ -107,7 +107,7 @@ class Graph {
                         stack.push([adj, curr]);
                         visited.add(adj);
                         result = false;
-                    }else if (adj !== parent && visited.has(adj)) {
+                    } else if (adj !== parent && visited.has(adj)) {
                         result = true;
                     }
                 }
@@ -116,7 +116,104 @@ class Graph {
         }
         return dfs(this.adjacenctList, stack, visited);
     }
+
+
+    cyclicDfsUndirectedTwo(graph = this.adjacenctList) {
+        const visited = new Set();
+        const nodeLength = graph.size;
+
+
+        const dfs = (start) => {
+            const stack = [];
+            stack.push([start, -1]);
+            while (stack.length > 0) {
+                const [curr, parent] = stack.pop();
+                if (visited.has(curr)) { continue; }
+                visited.add(curr);
+
+                for (const neigbhour of graph.get(curr)) {
+                    if (!visited.has(neigbhour)) {
+                        stack.push([neigbhour, curr]);
+                    } else if (neigbhour !== parent) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        for (let i = 0; i < nodeLength; i++) {
+            if (!visited.has(i)) {
+                if (dfs(i)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    cyclicDfsUndirectedRecursive(graph = this.adjacenctList) {
+        const visited = new Set();
+        const nodeLength = graph.size;
+        const dfs = (start, parent) => {
+            visited.add(start);
+            for (const neigbhour of graph.get(start)) {
+                if (!visited.has(neigbhour)) {
+                    if (dfs(neigbhour, parent)) {
+                        return true;
+                    }
+                } else if (neigbhour !== parent) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        for (let i = 0; i < nodeLength; i++) {
+            if (!visited.has(i)) {
+                if (dfs(i, -1)) {
+                    return true
+                }
+            }
+        }
+        return false;
+    }
+
+    cyclicBfsUndirected(graph = this.adjacenctList) {
+        const visited = new Set();
+        const nodeLength = graph.size;
+        const bfs = (start) => {
+            const queue = [];
+            queue.push({ curr: start, parent: -1 });
+            while (queue.length > 0) {
+                const { curr, parent } = queue.shift();
+                if (visited.has(curr)) { continue; }
+                visited.add(curr);
+                for (const neigbhour of graph.get(curr)) {
+                    if (!visited.has(neigbhour)) {
+                        queue.push({ curr: neigbhour, parent: curr });
+                    } else if (neigbhour !== parent) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        for (let i = 0; i < nodeLength; i++) {
+            if (!visited.has(i)) {
+                if (bfs(i)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
+
+
+
+
 
 let graph = new Graph();
 
@@ -128,11 +225,23 @@ let graph = new Graph();
 // graph.addEdges(1, 2);
 // graph.addEdges(2, 3); 
 // graph.addEdges(3, 0); 
-graph.addEdges(0, 4);
-graph.addEdges(0, 2);
-graph.addEdges(1, 2); 
-graph.addEdges(2, 3); 
+// graph.addEdges(0, 4);
+// graph.addEdges(0, 2);
+// graph.addEdges(1, 2);
+// graph.addEdges(2, 3);
+// graph.addEdges(3, 1);
 
-console.log("dfs", graph.depthFirstSearch(0));
-console.log("bfs", graph.breathFirstSerach(0));
-console.log("cyclicDfsUndirected", graph.cyclicDfsUndirected(0));
+graph.addEdges(0, 1);
+graph.addEdges(1, 2);
+graph.addVertex(4);
+graph.addEdges(5, 3);
+graph.addEdges(5, 6);
+graph.addEdges(6, 3);
+
+
+// console.log("dfs", graph.depthFirstSearch(0));
+// console.log("bfs", graph.breathFirstSerach(0));
+// console.log("cyclicDfsUndirected", graph.cyclicDfsUndirected(0));
+// console.log("cyclicDfsUndirected", graph.cyclicBfsUndirected());
+console.log("cyclicDfsUndirected", graph.cyclicDfsUndirectedTwo());
+console.log("cyclicDfsUndirected", graph.cyclicDfsUndirectedRecursive());
