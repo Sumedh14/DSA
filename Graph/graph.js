@@ -270,7 +270,7 @@ class Graph {
     }
 
 
-    // Kahn's Algorithm
+    // Kahn's Algorithm (DAG( Directed Asylic Graph))
     topologicalSortingBFS(graph = this.adjacenctList) {
         const indegree = {};
         const queue = [];
@@ -291,7 +291,7 @@ class Graph {
         }
 
         while (queue.length > 0) {
-            let res = queue.pop();
+            let res = queue.shift();
             result.push(res);
             for (const neigbhour of graph.get(res)) {
                 indegree[neigbhour]--;
@@ -301,6 +301,44 @@ class Graph {
             }
         }
         return result;
+    }
+
+    cyclicBfsDirected(graph = this.adjacenctList) {
+        const indegree = {};
+        const queue = [];
+        let count = 0;
+        for (const [vertex, neigbhour] of graph) {
+            indegree[vertex] = 0;
+        }
+        for (const [vertex, neigbhour] of graph) {
+            for (const nei of neigbhour) {
+                indegree[nei]++;
+            }
+        }
+
+
+        for (let i = 0; i < Object.keys(indegree).length; i++) {
+            if (indegree[i] == 0) {
+                queue.push(i);
+                count++;
+            }
+        }
+        while (queue.length > 0) {
+            let curr = queue.shift();
+            for (const neigbhour of graph.get(curr)) {
+                indegree[neigbhour]--;
+                if (indegree[neigbhour] == 0) {
+                    queue.push(neigbhour);
+                    count++;
+                }
+            }
+        }
+        if (count == Object.keys(indegree).length) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }
 
@@ -344,6 +382,11 @@ graph.addEdges(5, 1, true);
 graph.addEdges(5, 4, true);
 
 
+// graph.addEdges(0, 1, true);
+// graph.addEdges(1, 2, true);
+// graph.addEdges(2, 3, true);
+// graph.addEdges(3, 1, true);
+
 
 
 // console.log("dfs", graph.depthFirstSearch(0));
@@ -352,6 +395,7 @@ graph.addEdges(5, 4, true);
 // console.log("cyclicDfsUndirected", graph.cyclicBfsUndirected());
 // console.log("cyclicDfsUndirected", graph.cyclicDfsUndirectedTwo());
 // console.log("cyclicDfsUndirected", graph.cyclicDfsUndirectedRecursive());
-// console.log("cyclicDfsDirected", graph.cyclicDfsDirectedRecursive());
-console.log("cyclicDfsDirected", graph.topologicalSortingDFS());
-console.log("cyclicDfsDirected", graph.topologicalSortingBFS());
+// console.log("cyclicDfsDirectedRecursive", graph.cyclicDfsDirectedRecursive());
+// console.log("topologicalSortingDFS", graph.topologicalSortingDFS());
+// console.log("topologicalSortingBFS", graph.topologicalSortingBFS());
+console.log("cyclicBfsDirected", graph.cyclicBfsDirected());
