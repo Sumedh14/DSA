@@ -241,6 +241,67 @@ class Graph {
         }
         return false;
     }
+
+    topologicalSortingDFS(graph = this.adjacenctList) {
+        const visited = new Set();
+        const stack = [];
+        const result = [];
+
+        const dfs = (graph, start, visited, stack) => {
+            visited.add(start);
+            for (const neigbhour of graph.get(start)) {
+                if (!visited.has(neigbhour)) {
+                    dfs(graph, neigbhour, visited, stack);
+                }
+            }
+            stack.push(start);
+        }
+
+        for (let i = 0; i < graph.size; i++) {
+            if (!visited.has(i)) {
+                dfs(graph, i, visited, stack);
+            }
+        }
+
+        while (stack.length > 0) {
+            result.push(stack.pop());
+        }
+        return result;
+    }
+
+
+    // Kahn's Algorithm
+    topologicalSortingBFS(graph = this.adjacenctList) {
+        const indegree = {};
+        const queue = [];
+        const result = [];
+        for (const [vertex, neigbhour] of graph) {
+            indegree[vertex] = 0;
+        }
+        for (const [vertex, neigbhour] of graph) {
+            for (const nei of neigbhour) {
+                indegree[nei]++;
+            }
+        }
+
+        for (let i = 0; i < Object.keys(indegree).length; i++) {
+            if (indegree[i] == 0) {
+                queue.push(i);
+            }
+        }
+
+        while (queue.length > 0) {
+            let res = queue.pop();
+            result.push(res);
+            for (const neigbhour of graph.get(res)) {
+                indegree[neigbhour]--;
+                if (indegree[neigbhour] == 0) {
+                    queue.push(neigbhour);
+                }
+            }
+        }
+        return result;
+    }
 }
 
 
@@ -269,9 +330,19 @@ let graph = new Graph();
 // graph.addEdges(5, 3, false);
 // graph.addEdges(5, 6, false);
 
-graph.addEdges(0, 1, true);
-graph.addEdges(1, 2, true);
-graph.addEdges(2, 0, true);
+// graph.addEdges(0, 1, true);
+// graph.addEdges(1, 2, true);
+// graph.addEdges(2, 0, true);
+
+graph.addEdges(0, 2, true);
+graph.addEdges(0, 3, true);
+graph.addEdges(3, 2, true);
+graph.addEdges(2, 1, true);
+graph.addEdges(3, 1, true);
+graph.addEdges(1, 4, true);
+graph.addEdges(5, 1, true);
+graph.addEdges(5, 4, true);
+
 
 
 
@@ -281,4 +352,6 @@ graph.addEdges(2, 0, true);
 // console.log("cyclicDfsUndirected", graph.cyclicBfsUndirected());
 // console.log("cyclicDfsUndirected", graph.cyclicDfsUndirectedTwo());
 // console.log("cyclicDfsUndirected", graph.cyclicDfsUndirectedRecursive());
-console.log("cyclicDfsDirected", graph.cyclicDfsDirectedRecursive());
+// console.log("cyclicDfsDirected", graph.cyclicDfsDirectedRecursive());
+console.log("cyclicDfsDirected", graph.topologicalSortingDFS());
+console.log("cyclicDfsDirected", graph.topologicalSortingBFS());
