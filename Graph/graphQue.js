@@ -4,7 +4,7 @@
 
 const maze = [[0, 0, 1, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 1, 0], [1, 1, 0, 1, 1], [0, 0, 0, 0, 0]];
 let source = [0, 4];
-let destination = [3, 2];
+let destination = [4, 1];
 
 function searchMaze(maze, source, destination) {
     maze[source[0]][source[1]] = 1
@@ -31,6 +31,29 @@ function searchMaze(maze, source, destination) {
         return false
     }
     return mazeV(maze, source, destination);
+}
+
+
+function searchMazeNew(maze, source, destination) {
+    const stack = [];
+    const visited = new Set();
+    stack.push(source);
+    visited.add(source.toString());
+
+    while (stack.length > 0) {
+        const [x, y] = stack.pop();
+        if (x == destination[0] && y == destination[1]) { return true; }
+        const directions = [0, 0].map((i) => [1, -1].map((j) => [[x + i, y + j], [x + j, y + i]])).flat(2);
+        for (const [dx, dy] of directions) {
+            if (dx >= 0 && dy >= 0 && dx < maze.length && dy < maze[dx].length && maze[dx][dy] == 0) {
+                if (!visited.has([dx, dy].toString())) {
+                    stack.push([dx, dy]);
+                    visited.add([dx, dy].toString());
+                }
+            }
+        }
+    }
+    return false;
 }
 
 console.log("searchMaze", searchMaze(maze, source, destination));
@@ -70,7 +93,115 @@ function booleanMatrix(image, entry) {
     return image;
 }
 
+function booleanMatrixNew(image, entry) {
+    const queue = [];
+    const visited = new Set();
+    queue.push(entry);
+    visited.add(entry.toString());
+    let color = image[entry[0]][entry[1]];
+    image[entry[0]][entry[1]] = Number(!color);
+
+    for (const [x, y] of queue) {
+
+        const destination = [0, 0].map((i) => [1, -1].map((j) => [[x + i, y + j], [x + j, y + i]])).flat(2);
+        for (const [dx, dy] of destination) {
+            if (dy >= 0 && dx >= 0 && dx < image.length && dy < image[dx].length && image[dx][dy] == color) {
+                if (!visited.has([dx, dy].toString())) {
+                    image[dx][dy] = Number(!color);
+                    queue.push([dx, dy]);
+                }
+            }
+        }
+    }
+    return image;
+}
+
 console.log("booleanMatrix", booleanMatrix(image, entry));
+console.log("booleanMatrix", booleanMatrixNew(image, entry));
+
+
+/*
+You have a combination lock. It has 4 wheels that go from 0 to 9. Your job is to find the minimum amount of wheel turns to get to a target combination. The starting point is always 0000. However, there are several combinations that you have to avoid: deadends. If you get into a dead-end, the wheels will not turn anymore. If the target combination is impossible to reach return -1, otherwise return the minimum number of wheel turns.
+
+ex1:
+Input: deadends = ["8888"], target = "0109"
+Output: 2
+Explanation: 0000 -> 0009 -> 0109
+
+ex2:
+Input: deadends = ["8887","8889","8878","8898","8788","8988","7888","9888"], target = "8888"
+Output: -1
+Explanation: We can’t reach without crossing a deadend.
+*/
+
+
+
+function combinationLock(start, deadends, target) {
+    const visited = new Set();
+    const notIncude = new Set();
+    const stack = [];
+    stack.push([start, 0]);
+    visited.add(start);
+    notIncude.add(deadends);
+
+    for (const [current, moves] of stack) {
+        if (notIncude.has(current)) { continue; }
+        if (current == target) { return moves }
+        const combination = Array.from(current).reduce((arr, str, i) => arr.concat(
+            `${current.slice(0, i)}${(Number(str) + 1) % 10}${current.slice(i + 1)}`,
+            `${current.slice(0, i)}${(Number(str) + 9) % 10}${current.slice(i + 1)}`,
+        ), []);
+
+        for (const comb of combination) {
+            if (!visited.has(comb)) {
+                visited.add(comb);
+                stack.push([comb, moves + 1]);
+            }
+        }
+    }
+    return 0;
+}
+
+let inputC = "0000", deadends = ["8887", "8889", "8878", "8898", "8788", "8988", "7888", "9888"], target = "1090";
+
+console.log("combinationLock", combinationLock(inputC, deadends, target));
+
+
+
+// Chess Knight Problem 
+
+/*
+Given an infinite chessboard, find out how many moves does the knight needs to reach a given square on the board.
+
+boardSize = 8;
+start = [1,1];
+ends = [6,3]
+*/
+
+
+function infiniteChessboard(boardSize, start, ends) {
+    const queue = [];
+    const visited = new Set();
+    queue.push([start, 0]);
+    visited.add(start.toString());
+
+    for (const [[x, y], moves] of queue) {
+        if (x == ends[0] && y == ends[1]) { return moves; }
+        const directions = [1, -1].map((i) => [2, -2].map((j) => [[x + i, y + j], [x + j, y + i]])).flat(2);
+
+        for (const [dx, dy] of directions) {
+            if (!visited.has([dx, dy].toString())) {
+                visited.add([dx, dy].toString());
+                queue.push([[dx, dy], moves + 1]);
+            }
+        }
+    }
+    return 0;
+}
+
+let boardSize = 8, start = [1, 1], ends = [6, 3];
+console.log("infiniteChessboard", infiniteChessboard(boardSize, start, ends));
+
 
 
 // Number of Provinces
@@ -107,7 +238,7 @@ const adjList = new Map();
  */
 
 
-function numberOfProvinces(input) {
+function numberOfProvincesDFS(input) {
     const adjList = new Map();
     const visited = new Set();
     const stack = [];
@@ -149,7 +280,7 @@ function numberOfProvinces(input) {
     return count;
 }
 
-function numberOfProvincesTwo(input) {
+function numberOfProvincesTwoDFS(input) {
     const visited = new Set();
     const stack = [];
     let count = 0;
@@ -180,6 +311,150 @@ function numberOfProvincesTwo(input) {
     return count;
 }
 
-const input = [[1, 1],[1, 1]]
+const input = [[1, 1], [1, 1]]
 
-console.log("numberOfProvinces", numberOfProvincesTwo(input))
+console.log("numberOfProvinces", numberOfProvincesTwoDFS(input));
+
+
+
+// Course Schedule 
+
+/*
+imput : 2; prerequisites = [(1,0),(0,1)]
+output: false;
+*/
+
+// Kahn's Algorithm
+
+function courseSchedule(input, prerequisites) {
+    const adjList = new Map();
+    const queue = [];
+    const indegree = {};
+    const expIndegree = {};
+    let count = 0;
+    for (let i = 0; i < input; i++) {
+        adjList.set(i, []);
+        for (let j = 0; j < prerequisites[0].length; j++) {
+            if (prerequisites[i][j] == 1) {
+                adjList.get(i).push(j);
+            }
+        }
+    }
+
+    for (let i = 0; i < adjList.size; i++) {
+        indegree[i] = 0
+    }
+
+    for (let i = 0; i < prerequisites.length; i++) {
+        expIndegree[i] = [];
+        let sum = 0;
+        for (let j = 0; j < prerequisites[0].length; j++) {
+            if (prerequisites[i][j] == 1) {
+                sum += 1;
+                expIndegree[i][0] = sum;
+            }
+        }
+    }
+
+    for (const [vertex, neigbhour] of adjList) {
+        for (const neig of neigbhour) {
+            indegree[neig]++;
+        }
+    }
+
+    for (let i = 0; i < Object.keys(indegree).length; i++) {
+        if (indegree[i] == 0) {
+            queue.push(i);
+            count++;
+        }
+    }
+
+    while (queue.length > 0) {
+        let curr = queue.shift();
+        for (const neig of adjList.get(curr)) {
+            indegree[neig]--;
+            if (indegree[neig] == 0) {
+                queue.push(neig);
+                count++;
+            }
+        }
+    }
+
+    if (count == Object.keys(indegree).length) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+let imput = 2, prerequisites = [[1, 0], [0, 1]];
+
+console.log("courseSchedule", courseSchedule(imput, prerequisites))
+
+
+// Coures Schedule Two
+
+/*
+    Input = 4 prerequisites = [[1,0],[2,0],[3,1],[3,2]]
+    output = {0 , 2, 1, 3} if cycle is not there, if cyclic output = {}
+*/
+
+
+
+function courseScheduleTwo(inputTwo, prerequisitesTwo) {
+    const indegree = {};
+    const queue = [];
+    const result = [];
+    let count = 0;
+    const adjList = new Map();
+
+    for (let i = 0; i < inputTwo; i++) {
+        adjList.set(i, []);
+    }
+    for (const [fir, sec] of prerequisitesTwo) {
+        adjList.get(sec).push(fir)
+    }
+
+    for (let i = 0; i < adjList.size; i++) {
+        indegree[i] = 0;
+    }
+    for (const [vertex, neigbhours] of adjList) {
+        for (const neigbhour of neigbhours) {
+            indegree[neigbhour]++;
+        }
+    }
+
+
+    for (let i = 0; i < Object.keys(indegree).length; i++) {
+        if (indegree[i] == 0) {
+            queue.push(i);
+            count++;
+        }
+    }
+
+    while (queue.length > 0) {
+        let curr = queue.shift();
+        result.push(curr);
+        for (const neigbhour of adjList.get(curr)) {
+            indegree[neigbhour]--;
+            if (indegree[neigbhour] == 0) {
+                queue.push(neigbhour);
+                count++;
+            }
+        }
+    }
+
+    if (count == Object.keys(indegree).length && result.length == Object.keys(indegree).length) {
+        return result;
+    }
+    else {
+        return {}
+    }
+
+}
+
+
+let inputTwo = 6, prerequisitesTwo = [[1, 0], [2, 0], [3, 1], [3, 2], [4, 3], [5, 4], [3, 5]];
+
+console.log("courseSchedule", courseScheduleTwo(inputTwo, prerequisitesTwo))
