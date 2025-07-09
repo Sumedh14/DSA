@@ -458,3 +458,150 @@ function courseScheduleTwo(inputTwo, prerequisitesTwo) {
 let inputTwo = 6, prerequisitesTwo = [[1, 0], [2, 0], [3, 1], [3, 2], [4, 3], [5, 4], [3, 5]];
 
 console.log("courseSchedule", courseScheduleTwo(inputTwo, prerequisitesTwo))
+
+
+// cycle dectection using dsu
+
+function cycleDectionUsingDSU(inputGraph) {
+    const parent = new Array(inputGraph.size)
+    const rank = new Array(inputGraph.size);
+
+    for (let i = 0; i < inputGraph.size; i++) {
+        parent[i] = i;
+        rank[i] = 1;
+    }
+
+    const find = (val) => {
+        if (val == parent[val]) {
+            return val;
+        }
+        return parent[val] = find(parent[val]);
+    }
+
+
+    const union = (i_parent, neigbhour_parent) => {
+        let i_parent_find = find(i_parent);
+        let neigbhour_parent_find = find(neigbhour_parent);
+
+        if (i_parent_find == neigbhour_parent) {
+            return;
+        }
+        else if (rank[i_parent_find] > rank[neigbhour_parent_find]) {
+            parent[neigbhour_parent_find] = i_parent_find;
+        } else {
+            parent[i_parent_find] = neigbhour_parent_find;
+            rank[neigbhour_parent_find]++;
+        }
+    }
+
+    for (let i = 0; i < inputGraph.size; i++) {
+        for (const neigbhour of inputGraph.get(i)) {
+            if (i < neigbhour) {
+                let i_parent = find(i);
+                let neigbhour_parent = find(neigbhour);
+                if (i_parent == neigbhour_parent) {
+                    return true;
+                }
+                union(i_parent, neigbhour_parent);
+            }
+        }
+    }
+    return false;
+}
+
+function satisfiabilityOfEquations(graph) {
+    const parent = new Array(26);
+    const rank = new Array(26).fill(0);
+
+    for (let i = 0; i < 26; i++) {
+        parent[i] = i;
+    }
+
+    const find = (val) => {
+        if (val == parent[val]) {
+            return;
+        }
+        return parent[val] = find(parent[val]);
+    }
+
+    const union = (x, y) => {
+        let x_parent = find(x);
+        let y_parent = find(y);
+
+        if (x_parent == y_parent) {
+            return;
+        } else if (rank[x_parent] > rank[y_parent]) {
+            parent[y_parent] = x_parent;
+        } else {
+            parent[x_parent] = y_parent;
+            rank[y_parent]++;
+        }
+    }
+
+    for (const val of graph) {
+        if (val[1] == '=') {
+            union(val[0] - 'a', val[3] - 'a')
+        }
+    }
+
+    for (const val of graph) {
+        if (val[1] == '!') {
+            let char1 = val[0];
+            let char2 = val[3];
+
+            let first = find(char1 - 'a');
+            let sec = find(char2 - 'a');
+
+            if (first == sec) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+
+// Number of operation to make network connected
+function numberOFOperations(nodes, connections) {
+    const parent = new Array(nodes);
+    const rank = new Array(nodes).fill(0);
+
+    for (let i = 0; i < nodes; i++) {
+        parent[i] = i;
+    }
+
+    const find = (val) => {
+        if (val == parent[val]) {
+            return;
+        }
+        return parent[val] = find(parent[val]);
+    }
+
+    const union = (x, y) => {
+        let x_parent = find(x);
+        let y_parent = find(y);
+
+        if (x_parent == y_parent) {
+            return;
+        }
+        else if (rank[x_parent] > rank[y_parent]) {
+            parent[y_parent] = x_parent;
+        } else {
+            parent[x_parent] = y_parent;
+            rank[y_parent]++;
+        }
+    }
+    let n = nodes;
+    if (connections.size < nodes - 1) return false;
+    for (const neigbhour of connections) {
+        let first = neigbhour[0];
+        let sec = neigbhour[1];
+        let first_parent = find(first);
+        let sec_parent = find(sec);
+        if (first_parent !== sec_parent) {
+            n--;
+            union(first_parent, sec_parent);
+        }
+    }
+    return n - 1;
+}
