@@ -474,7 +474,7 @@ class Graph {
         union(x, y, result);
     }
 
-    // Dijstras's Alogorithm
+    // Dijstras's Alogorithm using Priority Queue
     dijstrasAddEdges(u, v, w) {
         if (!this.adjacenctList.has(u)) {
             this.adjacenctList.set(u, {});
@@ -538,6 +538,77 @@ class Graph {
             }
         }
         return distances;
+    }
+
+    // Dijstras Algo using Set
+    dijstraShortestDistanceSet(start, graph = this.adjacenctList) {
+        const distances = new Array(graph.size).fill(Infinity);
+        distances[start] = 0;
+        const visited = new Set();
+        const queue = new Set();
+        queue.add(start);
+        while (queue.size > 0) {
+            let min = Infinity;
+            let minNode = null;
+            for (const node of queue) {
+                if (distances[node] < min) {
+                    min = distances[node];
+                    minNode = node;
+                }
+            }
+            queue.delete(minNode);
+            visited.add(minNode);
+            if (graph.has(parseInt(minNode))) {
+                for (const neighbor in graph.get(parseInt(minNode))) {
+                    const distance = graph.get(parseInt(minNode))[neighbor];
+                    const newDistance = distances[minNode] + distance;
+                    if (newDistance < distances[neighbor]) {
+                        distances[neighbor] = newDistance;
+                        queue.add(neighbor);
+                    }
+                }
+            }
+        }
+        return distances;
+    }
+
+
+    // dijstras Algo for shortest path on weighted graph
+    // source -> destination
+
+    dijstrasShortestPath(source, destination, graph = this.adjacenctList) {
+        const distances = new Array(graph.size).fill(Infinity);
+        const previous = new Array(graph.size).fill(null);
+        distances[source] = 0;
+        this.enque(source, 0);
+
+        while (!this.isEmptyQueue()) {
+            const { element, priority } = this.dequeue();
+            if (parseInt(element) === destination) break;
+
+            if (graph.has(parseInt(element))) {
+                for (const neigbhour in graph.get(parseInt(element))) {
+                    const dist = graph.get(parseInt(element))[neigbhour];
+                    const newDistance = distances[element] + dist;
+                    if (newDistance < distances[neigbhour]) {
+                        distances[neigbhour] = newDistance;
+                        previous[neigbhour] = parseInt(element);
+                        this.enque(neigbhour, newDistance);
+                    }
+                }
+            }
+        }
+        const path = [];
+        let parent = destination;
+        while (parent !== null) {
+            path.unshift(parent);
+            parent = previous[parent];
+        }
+        if (distances[destination] === Infinity) {
+            return { distance: -1, path: [] }
+        }
+
+        return { distance: distances[destination], path }
     }
 }
 
@@ -620,4 +691,10 @@ const g = graph.getAdkList();
 console.log(g);
 
 const distance = graph.dijstraShortestDistancePriorityQueue(0);
+const distanceSet = graph.dijstraShortestDistanceSet(0);
 console.log("distance", distance)
+console.log("distanceSet", distanceSet)
+
+
+const distanceShort = graph.dijstrasShortestPath(0, 8);
+console.log("distance", distanceShort)

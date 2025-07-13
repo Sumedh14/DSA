@@ -2,6 +2,7 @@
 // Search Maze 
 //Given a 2D array of black and white entries representing a maze with designated entrance and exit points, find a path from the entrance to the exit, if one exists.
 
+
 const maze = [[0, 0, 1, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 1, 0], [1, 1, 0, 1, 1], [0, 0, 0, 0, 0]];
 let source = [0, 4];
 let destination = [4, 1];
@@ -605,3 +606,120 @@ function numberOFOperations(nodes, connections) {
     }
     return n - 1;
 }
+
+// Network Delay Time - Dijstras Algorithm
+function networkDelayTime(times, n, k) {
+    const graph = new Map();
+    for (const [u, v, w] of times) {
+        if (!graph.has(u)) {
+            graph.set(u, []);
+        }
+        graph.get(u).push({ node: v, time: w });
+    }
+
+    const distances = new Array(n + 1).fill(Infinity);
+    distances[k] = 0;
+    const priorityQueue = [];
+    priorityQueue.push({ node: k, time: 0 });
+
+    while (priorityQueue.length) {
+        const { node, time } = priorityQueue.shift();
+        if (time > distances[node]) continue;
+        if (graph.has(node)) {
+            for (const { node: neighbor, time: weight } of graph.get(node)) {
+                const newTime = time + weight;
+                if (newTime < distances[neighbor]) {
+                    distances[neighbor] = newTime;
+                    priorityQueue.push({ node: neighbor, time: newTime });
+                    priorityQueue.sort((a, b) => a.time - b.time);
+                }
+            }
+        }
+    }
+    const maxTime = Math.max(...distances.slice(1));
+    return maxTime === Infinity ? -1 : maxTime;
+}
+
+// let times = [[2, 1, 1], [2, 3, 1], [3, 4, 1]], n = 4, k = 2;
+let times = [[1, 2, 1]], n = 2, k = 2
+
+const delayTime = networkDelayTime(times, n, k);
+console.log("networkDelayTime", delayTime);
+
+
+
+// Shortest path in Binary Matrix
+function shortestPathBinaryMatrixBFS(grid) {
+    const directions = [[0, 1], [1, 0], [0, -1], [-1, 0], [1, 1], [-1, -1], [1, -1], [-1, 1]];
+    const queue = [];
+    const visited = new Set();
+    if (grid[0][0] === 1 || grid[grid.length - 1][grid[0].length - 1] === 1) return -1;
+
+    queue.push([0, 0, 1]);
+    visited.add("0,0");
+
+    while (queue.length > 0) {
+        const [x, y, dist] = queue.shift();
+        if (x === grid.length - 1 && y === grid[0].length - 1) return dist;
+
+        for (const [dx, dy] of directions) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (nx >= 0 && nx < grid.length && ny >= 0 && ny < grid[0].length && grid[nx][ny] === 0 && !visited.has(`${nx},${ny}`)) {
+                visited.add(`${nx},${ny}`);
+                queue.push([nx, ny, dist + 1]);
+            }
+        }
+    }
+    return -1;
+}
+
+const grid = [
+    [0, 1, 0],
+    [1, 0, 1],
+    [1, 0, 0]
+]
+
+console.log("shortestPathBinaryMatrixBFS", shortestPathBinaryMatrixBFS(grid));
+
+
+// Shortest Path in a grid using Dijkstra's Algorithm
+function shortestPathInGridDijstraAlgo(grid) {
+    const result = new Array(grid.length).fill(Infinity).map(() => new Array(grid[0].length).fill(Infinity));
+    const directions = [[0, 1], [1, 0], [0, -1], [-1, 0], [1, 1], [-1, -1], [-1, 1], [1, -1]];
+    const priorityQueue = [];
+    const visited = new Set();
+    priorityQueue.push({ x: 0, y: 0, dist: 1 });
+    result[0][0] = 1;
+    visited.add("0,0");
+
+    while (priorityQueue.length > 0) {
+        const { x, y, dist } = priorityQueue.shift();
+        if (x === grid.length - 1 && y === grid[0].length - 1) {
+            return dist;
+        }
+
+        for (const [dx, dy] of directions) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (nx >= 0 && nx < grid.length && ny >= 0 && ny < grid[0].length && grid[nx][ny] === 0 && !visited.has(`${nx},${ny}`)) {
+                const newDist = dist + 1;
+                if (newDist < result[nx][ny]) {
+                    result[nx][ny] = newDist;
+                    priorityQueue.push({ x: nx, y: ny, dist: newDist });
+                    visited.add(`${nx},${ny}`);
+                    priorityQueue.sort((a, b) => a.dist - b.dist);
+                }
+            }
+        }
+    }
+    return -1; // If no path found
+}
+
+const gridDij = [
+    [0, 0, 0],
+    [1, 1, 0],
+    [1, 0, 0]
+]
+
+console.log("shortestPathInGridDijstraAlgo", shortestPathInGridDijstraAlgo(gridDij));
