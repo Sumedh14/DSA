@@ -723,3 +723,107 @@ const gridDij = [
 ]
 
 console.log("shortestPathInGridDijstraAlgo", shortestPathInGridDijstraAlgo(gridDij));
+
+
+// Path with minimum effort
+function minimumEffortPath(heights) {
+    const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+    const priorityQueue = [];
+    const effortGrid = new Array(heights.length).fill(Infinity).map(() => new Array(heights[0].length).fill(Infinity));
+    priorityQueue.push({ x: 0, y: 0, effort: 0 });
+
+    while (priorityQueue.length > 0) {
+        const { x, y, effort } = priorityQueue.shift();
+        if (x === heights.length - 1 && y === heights[0].length - 1) {
+            return effort;
+        }
+
+        for (const [dx, dy] of directions) {
+            const nx = x + dx;
+            const ny = y + dy;
+
+            if (nx >= 0 && nx < heights.length && ny >= 0 && ny < heights[0].length && heights[nx][ny] !== undefined) {
+                const newEffort = Math.max(effort, Math.abs(heights[nx][ny] - heights[x][y]));
+                if (newEffort < effortGrid[nx][ny]) {
+                    effortGrid[nx][ny] = newEffort;
+                    priorityQueue.push({ x: nx, y: ny, effort: newEffort });
+                    priorityQueue.sort((a, b) => a.effort - b.effort);
+                }
+
+            }
+        }
+    }
+}
+
+const heights = [[1, 2, 2], [3, 8, 2], [5, 3, 5]];
+const heightsTwo = [
+    [1, 2, 1, 1, 1],
+    [1, 2, 1, 2, 1],
+    [1, 2, 1, 2, 1],
+    [1, 2, 1, 2, 1],
+    [1, 1, 1, 2, 1]
+];
+
+console.log("minimumEffortPath", minimumEffortPath(heights));
+// console.log("minimumEffortPathTwo", minimumEffortPath(heightsTwo));
+
+// Simulate routers and LSAs
+class Router {
+    constructor(id) {
+        this.id = id;
+        this.links = {}; // neighborId: cost
+        this.lsaDatabase = {}; // routerId: links
+    }
+
+    addLink(neighborId, cost) {
+        this.links[neighborId] = cost;
+    }
+
+    generateLSA() {
+        // Each router advertises its links
+        return { routerId: this.id, links: { ...this.links } };
+    }
+
+    receiveLSA(lsa) {
+        // Store received LSA in database
+        this.lsaDatabase[lsa.routerId] = lsa.links;
+    }
+
+    buildNetworkMap() {
+        // Combine all LSAs to build the network graph
+        const graph = {};
+        for (const [routerId, links] of Object.entries(this.lsaDatabase)) {
+            graph[routerId] = links;
+        }
+        return graph;
+    }
+}
+
+// Example usage:
+const r1 = new Router('A');
+const r2 = new Router('B');
+const r3 = new Router('C');
+
+r1.addLink('B', 10);
+r1.addLink('C', 5);
+r2.addLink('A', 10);
+r2.addLink('C', 2);
+r3.addLink('A', 5);
+r3.addLink('B', 2);
+
+// Routers generate LSAs
+const lsa1 = r1.generateLSA();
+const lsa2 = r2.generateLSA();
+const lsa3 = r3.generateLSA();
+
+// Routers receive LSAs from others
+[r1, r2, r3].forEach(router => {
+    router.receiveLSA(lsa1);
+    router.receiveLSA(lsa2);
+    router.receiveLSA(lsa3);
+});
+
+// Each router builds the network map
+console.log(r1.buildNetworkMap());
+console.log(r2.buildNetworkMap());
+console.log(r3.buildNetworkMap());

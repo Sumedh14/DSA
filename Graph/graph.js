@@ -108,7 +108,7 @@ class Graph {
                 for (const adj of adjacenctList.get(curr)) {
                     if (adj == parent) { continue; }
                     if (!visited.has(adj)) {
-                        stack.push([curr]);
+                        stack.push([adj, curr]);
                         visited.add(adj);
                         result = false;
                     } else if (adj !== parent && visited.has(adj)) {
@@ -405,7 +405,7 @@ class Graph {
 
     disjointSetUnit() {
         const findParent = (value, parent) => {
-            if (value !== parent[value]) {
+            if (value == parent[value]) {
                 return value;
             }
 
@@ -448,7 +448,7 @@ class Graph {
             }
         }
         const findParent = (val, parent) => {
-            if (val !== parent[val]) {
+            if (val == parent[val]) {
                 return val;
             }
 
@@ -598,18 +598,132 @@ class Graph {
                 }
             }
         }
+
+        // Early return for unreachable destination
+        if (distances[destination] === Infinity) {
+            return { distance: -1, path: [] };
+        }
+
+        // Build path efficiently
+        const path = [];
+        let current = destination;
+        while (current !== null) {
+            path.unshift(current);
+            current = previous[current];
+        }
+
+        return { distance: distances[destination], path };
+    }
+
+    //Bellman-Ford algorithm with early detection of negative cycles
+    bellmanFordShortestPath(source, destination, graph = this.adjacenctList) {
+        const distances = new Array(graph.size).fill(Infinity);
+        const previous = new Array(graph.size).fill(null);
+        distances[source] = 0;
+        let hasChanges = false;
+
+        // Main relaxation loop
+        for (let i = 0; i < graph.size - 1; i++) {
+            hasChanges = false;
+            for (const [u, edges] of graph) {
+                for (const [v, weight] of Object.entries(edges)) {
+                    if (distances[u] !== Infinity && distances[u] + weight < distances[v]) {
+                        distances[v] = distances[u] + weight;
+                        previous[v] = u;
+                        hasChanges = true;
+                    }
+                }
+            }
+            // Early termination if no changes in this iteration
+            if (!hasChanges) break;
+        }
+
+        // Check for negative cycles
+        for (const [u, edges] of graph) {
+            for (const [v, weight] of Object.entries(edges)) {
+                if (distances[u] !== Infinity && distances[u] + weight < distances[v]) {
+                    return { distance: -Infinity, path: [] }; // Negative cycle detected
+                }
+            }
+        }
+
         const path = [];
         let parent = destination;
         while (parent !== null) {
             path.unshift(parent);
             parent = previous[parent];
         }
+
         if (distances[destination] === Infinity) {
-            return { distance: -1, path: [] }
+            return { distance: -1, path: [] };
+        }
+        return { distance: distances[destination], path };
+    }
+
+    //Floyd-Warashall Algorithm shortest path for all pairs of vertices, directed and undirected graphs
+    // This algorithm is used to find the shortest paths between all pairs of vertices in a weighted graph.
+    // It works for both directed and undirected graphs, and can handle negative weights but not negative cycles.
+    // The algorithm uses dynamic programming to iteratively improve the shortest path estimates.
+    floydWarshall(graph = this.adjacenctList) {
+        const distances = new Array(graph.size).fill(Infinity).map(() => new Array(graph.size).fill(Infinity));
+
+        for (let i = 0; i < graph.size; i++) {
+            distances[i][i] = 0;
+            if (graph.has(i)) {
+                for (const [neighbor, weight] of Object.entries(graph.get(i))) {
+                    distances[i][neighbor] = weight;
+                }
+            }
         }
 
-        return { distance: distances[destination], path }
+        for (let k = 0; k < graph.size; k++) {
+            for (let i = 0; i < graph.size; i++) {
+                for (let j = 0; j < graph.size; j++) {
+                    if (distances[i][k] !== Infinity && distances[k][j] !== Infinity) {
+                        distances[i][j] = Math.min(distances[i][j], distances[i][k] + distances[k][j]);
+                    }
+                }
+            }
+        }
+
+        return distances;
     }
+
+    //Prism's Algorithm for Minimum Spanning Tree (MST)
+    // This algorithm finds the minimum spanning tree of a connected, undirected graph.
+    primsMinimumSpanningTree(graph = this.adjacenctList) {
+        const visited = new Set();
+        const parent = new Array(graph.size).fill(null);
+        const path = [];
+        const minHeap = [];
+        let sum = 0;
+        parent[0] = 0; // Start from the first node
+        minHeap.push({ node: 0, weight: 0 });
+
+
+        while (minHeap.length > 0) {
+            minHeap.sort((a, b) => a.weight - b.weight); // Sort by weight
+            console.log("minHeap", minHeap);
+            const { node, weight } = minHeap.shift();
+            sum += weight;
+
+            visited.add(parseInt(node));
+            if (graph.has(parseInt(node))) {
+                for (const [neighbor, edgeWeight] of Object.entries(graph.get(parseInt(node)))) {
+                    if (!visited.has(parseInt(neighbor))) {
+                        visited.add(parseInt(node));
+                        minHeap.push({ node: parseInt(neighbor), weight: edgeWeight });
+                        parent[parseInt(neighbor)] = node;
+                        if (!path.includes(node)) {
+                            path.push(node);
+                        }
+                    }
+                }
+            }
+        }
+        return { parent, sum, path };
+    }
+   
 }
 
 
@@ -698,3 +812,6 @@ console.log("distanceSet", distanceSet)
 
 const distanceShort = graph.dijstrasShortestPath(0, 8);
 console.log("distance", distanceShort)
+
+const prism = graph.primsMinimumSpanningTree(g);
+console.log("Prism", prism);
